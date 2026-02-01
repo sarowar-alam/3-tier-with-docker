@@ -118,7 +118,7 @@ Copy-Item .\backend\db.js ..\..\backend\src\db.js
 **Backend:**
 ```powershell
 # Production
-cd ../../backend
+cd ../backend
 docker build -t bmi-backend:latest .
 
 # Development
@@ -128,7 +128,7 @@ docker build -f Dockerfile.dev -t bmi-backend:dev .
 **Frontend:**
 ```powershell
 # Production
-cd ../../frontend
+cd ../frontend
 docker build -t bmi-frontend:latest .
 
 # Development

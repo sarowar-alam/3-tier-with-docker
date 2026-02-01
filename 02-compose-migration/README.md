@@ -256,7 +256,7 @@ Migrations run automatically on first container start via `docker-entrypoint-ini
 
 ```yaml
 volumes:
-  - ../../backend/migrations:/docker-entrypoint-initdb.d:ro
+  - ../backend/migrations:/docker-entrypoint-initdb.d:ro
 ```
 
 **Migration Files:**
@@ -346,7 +346,7 @@ proxy_pass http://backend:3000;
 2. **Bind Mounts** (Used for development)
    ```yaml
    volumes:
-     - ../../backend/src:/app/src:ro
+     - ../backend/src:/app/src:ro
    ```
 
 ### Volume Commands
