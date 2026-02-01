@@ -1,0 +1,29 @@
+# Environment files with secrets
+.env
+!.env.example
+
+# Docker volumes data
+data/
+volumes/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node modules (should be in backend/frontend .gitignore too)
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

@@ -138,7 +138,7 @@ docker build -f Dockerfile.dev -t bmi-frontend:dev .
 ### Method 2: Build All at Once
 
 ```powershell
-# From class1 directory
+# From 01-fundamentals-containerizing directory
 cd scripts
 .\build-all.ps1
 ```

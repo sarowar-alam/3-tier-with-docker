@@ -13,7 +13,7 @@ This repository contains materials for two comprehensive Docker classes:
 
 ## 📚 Class Structure
 
-### [Class 1: Docker Fundamentals & Containerizing](./class1/README.md)
+### [Class 1: Docker Fundamentals & Containerizing](./01-fundamentals-containerizing/README.md)
 
 **Duration:** 3-4 hours
 
@@ -40,11 +40,11 @@ This repository contains materials for two comprehensive Docker classes:
 - DockerHub account
 - AWS account (optional for ECR)
 
-[👉 Start Class 1](./class1/README.md)
+[👉 Start Class 1](./01-fundamentals-containerizing/README.md)
 
 ---
 
-### [Class 2: Docker Compose & Migration](./class2/README.md)
+### [Class 2: Docker Compose & Migration](./02-compose-migration/README.md)
 
 **Duration:** 3-4 hours
 
@@ -73,7 +73,7 @@ This repository contains materials for two comprehensive Docker classes:
 - Understanding of Docker images and containers
 - Basic knowledge of YAML syntax
 
-[👉 Start Class 2](./class2/README.md)
+[👉 Start Class 2](./02-compose-migration/README.md)
 
 ---
 
@@ -124,7 +124,7 @@ docker/
 │   └── package.json
 ├── database/                          # Database setup scripts
 │   └── setup-database.sh
-├── class1/                            # Class 1: Docker Fundamentals
+├── 01-fundamentals-containerizing/    # Class 1: Docker Fundamentals
 │   ├── README.md                      # Detailed Class 1 instructions
 │   ├── backend/
 │   │   ├── Dockerfile                 # Production multi-stage build
@@ -139,7 +139,7 @@ docker/
 │   └── scripts/
 │       ├── build-all.sh               # Build all images (Linux/Mac)
 │       └── build-all.ps1              # Build all images (Windows)
-└── class2/                            # Class 2: Docker Compose
+└── 02-compose-migration/              # Class 2: Docker Compose
     ├── README.md                      # Detailed Class 2 instructions
     ├── docker-compose.yml             # Production 3-tier stack
     ├── docker-compose.dev.yml         # Development with hot reload
@@ -173,7 +173,7 @@ docker/
 #### Preparing for Class 1
 
 1. Ensure Docker Desktop is installed on teaching machine
-2. Review [class1/README.md](./class1/README.md)
+2. Review [01-fundamentals-containerizing/README.md](./01-fundamentals-containerizing/README.md)
 3. Have DockerHub account ready
 4. Prepare AWS account for ECR demo (optional)
 5. Test build scripts on your system
@@ -187,7 +187,7 @@ docker/
 #### Preparing for Class 2
 
 1. Complete Class 1 setup (Dockerfiles in place)
-2. Review [class2/README.md](./class2/README.md)
+2. Review [02-compose-migration/README.md](./02-compose-migration/README.md)
 3. Test docker-compose stacks
 4. Prepare Grafana dashboards for demo
 5. Set up GitHub repository for CI/CD demo
@@ -212,7 +212,7 @@ docker/
 #### Before Class 2
 
 - [ ] Complete Class 1 exercises
-- [ ] Copy Dockerfiles from class1 to backend/frontend
+- [ ] Copy Dockerfiles from 01-fundamentals-containerizing to backend/frontend
 - [ ] Ensure Docker Desktop has sufficient resources (4GB RAM minimum)
 - [ ] Read [Docker Compose basics](https://docs.docker.com/compose/)
 
@@ -367,8 +367,8 @@ cd bmi-docker-training
 - Verify environment variables
 
 For detailed troubleshooting, see:
-- [Class 1 README - Common Issues](./class1/README.md#common-issues-and-solutions)
-- [Class 2 README - Common Issues](./class2/README.md#common-issues-and-solutions)
+- [Class 1 README - Common Issues](./01-fundamentals-containerizing/README.md#common-issues-and-solutions)
+- [Class 2 README - Common Issues](./02-compose-migration/README.md#common-issues-and-solutions)
 
 ---
 
@@ -431,7 +431,7 @@ This training material is provided for educational purposes.
 
 **Ready to begin?**
 
-👉 [Start with Class 1: Docker Fundamentals](./class1/README.md)
+👉 [Start with Class 1: Docker Fundamentals](./01-fundamentals-containerizing/README.md)
 
 ---
 

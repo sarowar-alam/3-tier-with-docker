@@ -60,7 +60,7 @@ By the end of this class, students will:
 
 ### Docker Compose Files
 ```
-class2/
+02-compose-migration/
 ├── docker-compose.yml              # Production 3-tier stack
 ├── docker-compose.dev.yml          # Development stack with hot reload
 ├── docker-compose.monitoring.yml   # Monitoring stack (Prometheus, Grafana, Loki)
@@ -105,8 +105,8 @@ scripts/
 ### Step 1: Setup Environment
 
 ```powershell
-# Navigate to class2 directory
-cd class2
+# Navigate to 02-compose-migration directory
+cd 02-compose-migration
 
 # Copy environment template
 Copy-Item .env.example .env
@@ -127,7 +127,7 @@ notepad .env
 ### Option 1: Development Mode (With Hot Reload)
 
 ```powershell
-# From class2 directory
+# From 02-compose-migration directory
 cd scripts
 .\dev-up.ps1
 
@@ -149,7 +149,7 @@ docker-compose -f docker-compose.dev.yml up -d
 ### Option 2: Production Mode (With Monitoring)
 
 ```powershell
-# From class2 directory
+# From 02-compose-migration directory
 cd scripts
 .\prod-up.ps1
 
@@ -619,12 +619,12 @@ git clone https://github.com/yourusername/bmi-app.git
 cd bmi-app
 
 # Copy Class 1 files to appropriate locations
-cp class1/backend/Dockerfile backend/
-cp class1/frontend/Dockerfile frontend/
+cp 01-fundamentals-containerizing/backend/Dockerfile backend/
+cp 01-fundamentals-containerizing/frontend/Dockerfile frontend/
 # ... (copy other files)
 
-# Navigate to class2
-cd class2
+# Navigate to 02-compose-migration
+cd 02-compose-migration
 
 # Set up environment
 cp .env.example .env
