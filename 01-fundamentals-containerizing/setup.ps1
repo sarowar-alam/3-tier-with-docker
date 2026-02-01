@@ -26,6 +26,9 @@ Write-Host "  [OK] .dockerignore" -ForegroundColor Green
 Copy-Item "$classFolder\backend\db.js" "$rootFolder\backend\src\db.js" -Force
 Write-Host "  [OK] db.js with retry logic" -ForegroundColor Green
 
+Copy-Item "$classFolder\backend\.env.example" "$rootFolder\backend\.env" -Force
+Write-Host "  [OK] .env (from .env.example)" -ForegroundColor Green
+
 # Copy frontend files
 Write-Host ""
 Write-Host "Frontend files:" -ForegroundColor Cyan

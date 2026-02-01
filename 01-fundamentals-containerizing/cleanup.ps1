@@ -1,15 +1,40 @@
-# Class 1 Cleanup Script - Remove Docker files from application folders
+# Class 1 Cleanup Script - Remove Docker files and containers
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Yellow
-Write-Host "     CLASS 1 CLEANUP - Removing Docker Files" -ForegroundColor Yellow
+Write-Host "     CLASS 1 CLEANUP - Complete Cleanup" -ForegroundColor Yellow
 Write-Host "================================================================" -ForegroundColor Yellow
 Write-Host ""
 
 $classFolder = $PSScriptRoot
 $rootFolder = Split-Path -Parent $classFolder
 
-Write-Host "Removing Docker files from application folders..." -ForegroundColor Yellow
+# Stop and remove Docker containers
+Write-Host "Stopping and removing Docker containers..." -ForegroundColor Cyan
+$containers = @("bmi-backend-test", "bmi-frontend-test", "postgres-bmi")
+foreach ($container in $containers) {
+    $exists = docker ps -a --format "{{.Names}}" | Select-String -Pattern "^$container$"
+    if ($exists) {
+        docker stop $container 2>$null | Out-Null
+        docker rm $container 2>$null | Out-Null
+        Write-Host "  [OK] Removed container: $container" -ForegroundColor Green
+    }
+}
+
+# Remove Docker images
+Write-Host ""
+Write-Host "Removing locally built Docker images..." -ForegroundColor Cyan
+$images = @("bmi-backend:latest", "bmi-backend:dev", "bmi-frontend:latest", "bmi-frontend:dev")
+foreach ($image in $images) {
+    $exists = docker images --format "{{.Repository}}:{{.Tag}}" | Select-String -Pattern "^$image$"
+    if ($exists) {
+        docker rmi $image 2>$null | Out-Null
+        Write-Host "  [OK] Removed image: $image" -ForegroundColor Green
+    }
+}
+
+Write-Host ""
+Write-Host "Removing Docker files from application folders..." -ForegroundColor Cyan
 Write-Host ""
 
 # Remove backend files
@@ -25,6 +50,10 @@ if (Test-Path "$rootFolder\backend\Dockerfile.dev") {
 if (Test-Path "$rootFolder\backend\.dockerignore") {
     Remove-Item "$rootFolder\backend\.dockerignore" -Force
     Write-Host "  [OK] Removed .dockerignore" -ForegroundColor Green
+}
+if (Test-Path "$rootFolder\backend\.env") {
+    Remove-Item "$rootFolder\backend\.env" -Force
+    Write-Host "  [OK] Removed .env" -ForegroundColor Green
 }
 
 Write-Host "  [NOTE] db.js kept - has retry logic improvements" -ForegroundColor Yellow

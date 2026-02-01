@@ -27,6 +27,9 @@ echo "   .dockerignore"
 cp "$CLASS_FOLDER/backend/db.js" "$ROOT_FOLDER/backend/src/db.js"
 echo "   db.js (with retry logic)"
 
+cp "$CLASS_FOLDER/backend/.env.example" "$ROOT_FOLDER/backend/.env"
+echo "   .env (from .env.example)"
+
 # Copy frontend files
 echo ""
 echo " Frontend files:"
