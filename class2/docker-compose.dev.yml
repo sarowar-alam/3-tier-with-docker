@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: bmi-postgres-dev
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bmi_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-bmidb}
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
+      - ../../backend/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - app-network-dev
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bmi_user} -d ${POSTGRES_DB:-bmidb}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  # Backend API (Development with hot reload)
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile.dev
+    container_name: bmi-backend-dev
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bmi_user}:${POSTGRES_PASSWORD:-devpassword}@postgres:5432/${POSTGRES_DB:-bmidb}
+      PORT: ${BACKEND_PORT:-3000}
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network-dev
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      - ../../backend/src:/app/src:ro
+      - ../../backend/package.json:/app/package.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend (Development with Vite HMR)
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile.dev
+    container_name: bmi-frontend-dev
+    environment:
+      VITE_API_URL: http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - app-network-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../../frontend/src:/app/src:ro
+      - ../../frontend/index.html:/app/index.html:ro
+      - ../../frontend/vite.config.js:/app/vite.config.js:ro
+      - ../../frontend/package.json:/app/package.json:ro
+
+networks:
+  app-network-dev:
+    driver: bridge
+    name: bmi-app-network-dev
+
+volumes:
+  postgres-data-dev:
+    name: bmi-postgres-data-dev

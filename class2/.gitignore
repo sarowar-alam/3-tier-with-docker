@@ -1,0 +1,14 @@
+# Environment files with secrets
+.env
+
+# Volumes data (if mounted locally)
+data/
+volumes/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
