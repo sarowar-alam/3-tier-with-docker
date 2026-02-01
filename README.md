@@ -1,8 +1,10 @@
-# Docker Classes - BMI Health Tracker Application
+﻿# Docker Classes - BMI Health Tracker Application
 
 Complete Docker training materials for containerizing and deploying a 3-tier BMI Health Tracker application.
 
-## 🎓 Course Overview
+> ** For Instructors**: See [SETUP-GUIDE.md](SETUP-GUIDE.md) for repeatable class setup/cleanup workflow.
+
+##  Course Overview
 
 This repository contains materials for two comprehensive Docker classes:
 
@@ -11,7 +13,7 @@ This repository contains materials for two comprehensive Docker classes:
 
 ---
 
-## 📚 Class Structure
+##  Class Structure
 
 ### [Class 1: Docker Fundamentals & Containerizing](./01-fundamentals-containerizing/README.md)
 
@@ -77,7 +79,7 @@ This repository contains materials for two comprehensive Docker classes:
 
 ---
 
-## 🏗️ Application Architecture
+##  Application Architecture
 
 ### 3-Tier BMI Health Tracker
 
@@ -110,7 +112,7 @@ This repository contains materials for two comprehensive Docker classes:
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```
 docker/
@@ -166,7 +168,7 @@ docker/
 
 ---
 
-## 🚀 Quick Start Guide
+##  Quick Start Guide
 
 ### For Instructors
 
@@ -218,26 +220,26 @@ docker/
 
 ---
 
-## 🎯 Learning Outcomes
+##  Learning Outcomes
 
 After completing both classes, students will be able to:
 
 ### Technical Skills
-- ✅ Write production-ready Dockerfiles
-- ✅ Implement multi-stage builds for optimization
-- ✅ Create docker-compose configurations for multi-tier applications
-- ✅ Manage Docker networks and volumes
-- ✅ Implement health checks and container monitoring
-- ✅ Set up comprehensive observability (metrics, logs, traces)
-- ✅ Integrate Docker builds into CI/CD pipelines
-- ✅ Deploy containerized applications to cloud platforms
+-  Write production-ready Dockerfiles
+-  Implement multi-stage builds for optimization
+-  Create docker-compose configurations for multi-tier applications
+-  Manage Docker networks and volumes
+-  Implement health checks and container monitoring
+-  Set up comprehensive observability (metrics, logs, traces)
+-  Integrate Docker builds into CI/CD pipelines
+-  Deploy containerized applications to cloud platforms
 
 ### Conceptual Understanding
-- ✅ Understand containerization benefits over VMs
-- ✅ Explain Docker architecture and components
-- ✅ Design microservices-ready architectures
-- ✅ Implement infrastructure as code practices
-- ✅ Apply DevOps best practices
+-  Understand containerization benefits over VMs
+-  Explain Docker architecture and components
+-  Design microservices-ready architectures
+-  Implement infrastructure as code practices
+-  Apply DevOps best practices
 
 ---
 
@@ -317,7 +319,7 @@ cd bmi-docker-training
 
 ---
 
-## 📖 Additional Resources
+##  Additional Resources
 
 ### Official Documentation
 - [Docker Documentation](https://docs.docker.com/)
@@ -407,7 +409,7 @@ This training material is provided for educational purposes.
 
 ---
 
-## ✅ Pre-Class Checklist
+##  Pre-Class Checklist
 
 ### Students
 

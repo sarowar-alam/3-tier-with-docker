@@ -1,6 +1,6 @@
-# Class 1: Docker Fundamentals & Containerizing
+﻿# Class 1: Docker Fundamentals & Containerizing
 
-## 🎯 Learning Objectives
+##  Learning Objectives
 
 By the end of this class, students will:
 - Understand containerization concepts and Docker architecture
@@ -11,7 +11,7 @@ By the end of this class, students will:
 
 ---
 
-## 📚 Topics Covered
+##  Topics Covered
 
 1. **Introduction to Containerization**
    - Why move from VMs to Containers?
@@ -53,7 +53,7 @@ By the end of this class, students will:
 
 ---
 
-## 📁 Files Overview
+##  Files Overview
 
 ### Backend Files
 ```
@@ -82,7 +82,7 @@ scripts/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Docker Desktop installed
@@ -224,7 +224,7 @@ docker push yourusername/bmi-frontend:v1.0.0
 
 ---
 
-## ☁️ Pushing to AWS ECR
+##  Pushing to AWS ECR
 
 ### 1. Create ECR Repositories
 ```powershell
@@ -256,7 +256,7 @@ docker push $ECR_REGISTRY/bmi-frontend:latest
 
 ---
 
-## 🔍 Useful Docker Commands
+##  Useful Docker Commands
 
 ### Image Management
 ```powershell
@@ -393,7 +393,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ---
 
-## ⚠️ Common Issues and Solutions
+##  Common Issues and Solutions
 
 ### 1. Build Fails - Cannot Find Package.json
 **Problem:** `COPY package*.json ./` fails
@@ -444,7 +444,7 @@ docker logs <container-id>
 
 ---
 
-## 🎓 Class Activities
+##  Class Activities
 
 ### Activity 1: Build Your First Image
 1. Navigate to backend directory
@@ -504,7 +504,7 @@ docker logs <container-id>
 
 ---
 
-## ✅ Class 1 Checklist
+##  Class 1 Checklist
 
 - [ ] Understand containerization concepts
 - [ ] Install Docker Desktop

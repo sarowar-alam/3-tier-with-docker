@@ -1,6 +1,6 @@
-# Class 2: Docker Compose & Migrating Deployment from VMs to Containers
+﻿# Class 2: Docker Compose & Migrating Deployment from VMs to Containers
 
-## 🎯 Learning Objectives
+##  Learning Objectives
 
 By the end of this class, students will:
 - Understand Docker Compose for multi-container orchestration
@@ -14,7 +14,7 @@ By the end of this class, students will:
 
 ---
 
-## 📚 Topics Covered
+##  Topics Covered
 
 1. **Docker Compose Fundamentals**
    - Introduction to Docker Compose
@@ -56,7 +56,7 @@ By the end of this class, students will:
 
 ---
 
-## 📁 Files Overview
+##  Files Overview
 
 ### Docker Compose Files
 ```
@@ -94,7 +94,7 @@ scripts/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -136,10 +136,10 @@ docker-compose -f docker-compose.dev.yml up -d
 ```
 
 **Development Features:**
-- ✅ Vite HMR (Hot Module Replacement) for frontend
-- ✅ Nodemon auto-restart for backend
-- ✅ Source code mounted as volumes
-- ✅ Fast iteration cycle
+-  Vite HMR (Hot Module Replacement) for frontend
+-  Nodemon auto-restart for backend
+-  Source code mounted as volumes
+-  Fast iteration cycle
 
 **Access:**
 - Frontend: http://localhost:5173
@@ -159,11 +159,11 @@ docker-compose -f docker-compose.monitoring.yml up -d
 ```
 
 **Production Features:**
-- ✅ Optimized multi-stage builds
-- ✅ Nginx serving frontend
-- ✅ Health checks enabled
-- ✅ Logging and monitoring
-- ✅ Automatic restarts
+-  Optimized multi-stage builds
+-  Nginx serving frontend
+-  Health checks enabled
+-  Logging and monitoring
+-  Automatic restarts
 
 **Access:**
 - Frontend: http://localhost
@@ -235,7 +235,7 @@ docker-compose up -d --scale backend=3
 
 ---
 
-## 🗄️ Database Management
+##  Database Management
 
 ### Accessing PostgreSQL
 
@@ -373,7 +373,7 @@ docker run --rm -v bmi-postgres-data:/data -v ${PWD}:/backup alpine tar xzf /bac
 
 ---
 
-## 🔍 Health Checks
+##  Health Checks
 
 ### Health Check Configuration
 
@@ -504,7 +504,7 @@ rate({container="bmi-backend"} |= "error" [5m])
 
 ---
 
-## 🔄 CI/CD Integration with GitHub Actions
+##  CI/CD Integration with GitHub Actions
 
 ### GitHub Actions Workflow
 
@@ -580,7 +580,7 @@ jobs:
 
 ---
 
-## ☁️ Deploying on AWS EC2
+##  Deploying on AWS EC2
 
 ### 1. Launch EC2 Instance
 
@@ -687,7 +687,7 @@ Total Time: 5 minutes
 
 ---
 
-## ⚠️ Common Issues and Solutions
+##  Common Issues and Solutions
 
 ### 1. Port Already in Use
 
@@ -763,7 +763,7 @@ docker-compose ps
 
 ---
 
-## 🎓 Class Activities
+##  Class Activities
 
 ### Activity 1: Deploy 3-Tier Stack
 1. Start production stack with `docker-compose up -d`
@@ -840,7 +840,7 @@ docker-compose ps
 
 ---
 
-## ✅ Class 2 Checklist
+##  Class 2 Checklist
 
 - [ ] Understand Docker Compose structure
 - [ ] Write docker-compose.yml for 3-tier app

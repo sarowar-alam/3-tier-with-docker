@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 ################################################################################
 # BMI Health Tracker - Complete Database Setup Script
@@ -564,13 +564,13 @@ display_summary() {
     print_header "Database Setup Complete!"
     
     echo ""
-    echo -e "${GREEN}✓ PostgreSQL installed and running${NC}"
-    echo -e "${GREEN}✓ Database '$DB_NAME' created${NC}"
-    echo -e "${GREEN}✓ User '$DB_USER' created with privileges${NC}"
-    echo -e "${GREEN}✓ Migrations completed${NC}"
-    echo -e "${GREEN}✓ Connection tested successfully${NC}"
-    echo -e "${GREEN}✓ Environment file generated${NC}"
-    echo -e "${GREEN}✓ Backup/Restore scripts created${NC}"
+    echo -e "${GREEN} PostgreSQL installed and running${NC}"
+    echo -e "${GREEN} Database '$DB_NAME' created${NC}"
+    echo -e "${GREEN} User '$DB_USER' created with privileges${NC}"
+    echo -e "${GREEN} Migrations completed${NC}"
+    echo -e "${GREEN} Connection tested successfully${NC}"
+    echo -e "${GREEN} Environment file generated${NC}"
+    echo -e "${GREEN} Backup/Restore scripts created${NC}"
     echo ""
     
     print_info "Database Connection Details:"

@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+﻿const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://bmi_user:password@localhost:5432/bmidb',
@@ -14,13 +14,13 @@ async function connectWithRetry(maxRetries = 5, delayMs = 2000) {
       const client = await pool.connect();
       const result = await client.query('SELECT NOW()');
       client.release();
-      console.log('✅ Database connected successfully at', result.rows[0].now);
+      console.log(' Database connected successfully at', result.rows[0].now);
       return true;
     } catch (err) {
       console.log(`⏳ Database connection attempt ${attempt}/${maxRetries} failed:`, err.message);
       
       if (attempt === maxRetries) {
-        console.error('❌ Failed to connect to database after', maxRetries, 'attempts');
+        console.error(' Failed to connect to database after', maxRetries, 'attempts');
         throw err;
       }
       

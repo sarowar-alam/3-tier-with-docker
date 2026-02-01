@@ -27,3 +27,28 @@ build/
 tmp/
 temp/
 *.tmp
+
+# ===================================================================
+# Class Setup Files - Copied by setup.ps1/setup.sh during class
+# Don't commit these - they're cleaned up by cleanup.ps1/cleanup.sh
+# ===================================================================
+
+# Class 1 - Docker files copied to backend/frontend
+/backend/Dockerfile
+/backend/Dockerfile.dev
+/backend/.dockerignore
+/frontend/Dockerfile
+/frontend/Dockerfile.dev
+/frontend/.dockerignore
+/frontend/nginx.conf
+
+# Class 2 - Compose files copied to root
+/docker-compose.yml
+/docker-compose.dev.yml
+/docker-compose.monitoring.yml
+/.env.example
+/monitoring/
+/start.ps1
+/start.sh
+/stop.ps1
+/stop.sh

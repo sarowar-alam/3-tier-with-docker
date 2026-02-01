@@ -1,4 +1,4 @@
-Write-Host "🛑 Stopping all services..." -ForegroundColor Yellow
+﻿Write-Host " Stopping all services..." -ForegroundColor Yellow
 
 # Navigate to class2 directory
 Set-Location $PSScriptRoot\..
@@ -16,7 +16,7 @@ Write-Host "🔧 Stopping development stack (if running)..." -ForegroundColor Cy
 docker-compose -f docker-compose.dev.yml down
 
 Write-Host ""
-Write-Host "✅ All services stopped!" -ForegroundColor Green
+Write-Host " All services stopped!" -ForegroundColor Green
 Write-Host ""
-Write-Host "💡 To remove volumes as well, run:" -ForegroundColor Cyan
+Write-Host " To remove volumes as well, run:" -ForegroundColor Cyan
 Write-Host "   docker-compose down -v" -ForegroundColor Gray
