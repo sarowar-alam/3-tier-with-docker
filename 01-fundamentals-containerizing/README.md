@@ -219,9 +219,360 @@ docker images
 
 ---
 
+##  Installing Docker on AWS EC2 Instance
+
+Before working with real applications, let's set up Docker on an EC2 instance for cloud-based development.
+
+### Prerequisites
+
+- AWS account with EC2 access
+- SSH key pair for connecting to EC2
+- Basic Linux command-line knowledge
+
+---
+
+### Step 1: Launch EC2 Instance
+
+1. **Go to AWS Console** → EC2 → Launch Instance
+
+2. **Configure Instance:**
+   - Name: `docker-server`
+   - AMI: **Ubuntu Server 24.04 LTS** or **Amazon Linux 2023**
+   - Instance Type: `t2.micro` (free tier) or `t3.medium` (recommended for multiple containers)
+   - Key Pair: Select or create new key pair
+   - Security Group: Allow SSH (22), HTTP (80), Custom TCP (3000, 5432, 8080)
+
+3. **Security Group Rules:**
+   ```
+   Type            Port Range    Source          Description
+   SSH             22            My IP           SSH access
+   HTTP            80            0.0.0.0/0       Nginx default
+   Custom TCP      3000          0.0.0.0/0       Backend API
+   Custom TCP      5432          My IP           PostgreSQL (restrict to your IP)
+   Custom TCP      8080          0.0.0.0/0       Frontend
+   ```
+
+4. **Storage:** 20 GB gp3 (minimum for Docker images)
+
+5. **Launch Instance** and wait for status: Running
+
+---
+
+### Step 2: Connect to EC2 Instance
+
+**For Windows (PowerShell):**
+```powershell
+# Navigate to your key location
+cd C:\Users\YourName\.ssh
+
+# Set correct permissions (if needed)
+icacls "your-key.pem" /inheritance:r
+icacls "your-key.pem" /grant:r "$($env:USERNAME):(R)"
+
+# Connect via SSH
+ssh -i "your-key.pem" ubuntu@your-ec2-public-ip
+# For Amazon Linux: ssh -i "your-key.pem" ec2-user@your-ec2-public-ip
+```
+
+**For Linux/Mac:**
+```bash
+chmod 400 your-key.pem
+ssh -i "your-key.pem" ubuntu@your-ec2-public-ip
+```
+
+---
+
+### Step 3: Install Docker on Ubuntu
+
+```bash
+# Update package index
+sudo apt-get update
+
+# Install required packages
+sudo apt-get install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+# Add Docker's official GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Set up Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Verify installation
+sudo docker --version
+```
+
+**Expected Output:**
+```
+Docker version 27.1.0, build 12345ab
+```
+
+---
+
+### Step 3 (Alternative): Install Docker on Amazon Linux 2023
+
+```bash
+# Update package manager
+sudo yum update -y
+
+# Install Docker
+sudo yum install -y docker
+
+# Start Docker service
+sudo systemctl start docker
+
+# Enable Docker to start on boot
+sudo systemctl enable docker
+
+# Verify installation
+sudo docker --version
+```
+
+---
+
+### Step 4: Configure Docker Permissions
+
+```bash
+# Add current user to docker group (no more sudo needed!)
+sudo usermod -aG docker $USER
+
+# Apply group changes (logout/login or use newgrp)
+newgrp docker
+
+# Verify you can run docker without sudo
+docker ps
+```
+
+**Expected Output:**
+```
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+---
+
+### Step 5: Verify Docker Installation
+
+```bash
+# Check Docker service status
+sudo systemctl status docker
+
+# Run hello-world container
+docker run hello-world
+
+# Check Docker info
+docker info
+
+# Check available space
+df -h
+```
+
+---
+
+### Step 6: Install Docker Compose (Optional but Recommended)
+
+**For Ubuntu:**
+```bash
+# Docker Compose plugin is already installed with docker-compose-plugin
+docker compose version
+```
+
+**For Amazon Linux (if needed):**
+```bash
+# Download Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+# Make executable
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify
+docker-compose --version
+```
+
+---
+
+### Step 7: Install Git (to Clone Your Project)
+
+```bash
+# Ubuntu
+sudo apt-get install -y git
+
+# Amazon Linux
+sudo yum install -y git
+
+# Verify
+git --version
+```
+
+---
+
+### Step 8: Clone Your Project Repository
+
+```bash
+# Navigate to home directory
+cd ~
+
+# Clone your BMI tracker project
+git clone https://github.com/yourusername/bmi-tracker.git
+
+# Navigate to project
+cd bmi-tracker
+```
+
+---
+
+### Step 9: Test Docker with Nginx (Same as Local)
+
+```bash
+# Pull nginx image
+docker pull nginx:alpine
+
+# Run nginx container
+docker run -d --name test-nginx -p 80:80 nginx:alpine
+
+# Check if running
+docker ps
+
+# Test from EC2 (should see HTML)
+curl http://localhost
+
+# Test from your browser (use EC2 public IP)
+# http://your-ec2-public-ip
+```
+
+**Access from your browser:**
+- Open: `http://your-ec2-public-ip`
+- You should see "Welcome to nginx!"
+
+**Cleanup:**
+```bash
+docker stop test-nginx
+docker rm test-nginx
+docker rmi nginx:alpine
+```
+
+---
+
+### 🔧 EC2 Docker Troubleshooting
+
+#### Issue 1: Permission Denied
+
+**Error:**
+```
+Got permission denied while trying to connect to the Docker daemon socket
+```
+
+**Solution:**
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+# Or logout and login again
+```
+
+---
+
+#### Issue 2: Docker Service Not Running
+
+**Error:**
+```
+Cannot connect to the Docker daemon
+```
+
+**Solution:**
+```bash
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo systemctl status docker
+```
+
+---
+
+#### Issue 3: Out of Disk Space
+
+**Error:**
+```
+no space left on device
+```
+
+**Solution:**
+```bash
+# Check disk usage
+df -h
+
+# Clean up Docker resources
+docker system prune -a --volumes
+
+# Or increase EBS volume in AWS Console
+```
+
+---
+
+#### Issue 4: Security Group - Cannot Access from Browser
+
+**Problem:** Cannot access nginx on http://ec2-public-ip
+
+**Solution:**
+- Check EC2 Security Group has port 80 inbound rule
+- Source: 0.0.0.0/0 (or your IP)
+- Verify instance public IP: `curl ifconfig.me`
+
+---
+
+#### Issue 5: AWS Session Timeout
+
+**Problem:** SSH connection drops after inactivity
+
+**Solution:**
+```bash
+# On EC2, edit SSH config
+sudo nano /etc/ssh/sshd_config
+
+# Add these lines:
+ClientAliveInterval 60
+ClientAliveCountMax 3
+
+# Restart SSH service
+sudo systemctl restart sshd
+```
+
+---
+
+### 📊 EC2 Docker Best Practices
+
+1. **Always use security groups** - Don't expose all ports to 0.0.0.0/0
+2. **Monitor disk space** - Docker images can fill up storage quickly
+3. **Use elastic IPs** - For consistent access (optional, costs apply)
+4. **Regular cleanup** - Run `docker system prune` weekly
+5. **Enable CloudWatch** - Monitor EC2 metrics
+6. **Backup important data** - Use volumes and EBS snapshots
+
+---
+
+### ✅ EC2 Docker Setup Checklist
+
+- [ ] EC2 instance launched (Ubuntu/Amazon Linux)
+- [ ] Security group configured (ports 22, 80, 3000, 5432, 8080)
+- [ ] Connected via SSH successfully
+- [ ] Docker installed and running
+- [ ] User added to docker group (no sudo needed)
+- [ ] Git installed
+- [ ] Tested with nginx container
+- [ ] Can access nginx from browser using public IP
+
+---
+
 ##  Part 2: Real-World Application - BMI Tracker
 
-Now that you understand Docker basics, let's apply this knowledge to containerize a **real three-tier application**!
+Now that you understand Docker basics and have Docker installed (locally or on EC2), let's apply this knowledge to containerize a **real three-tier application**!
 
 ### What You'll Build
 
