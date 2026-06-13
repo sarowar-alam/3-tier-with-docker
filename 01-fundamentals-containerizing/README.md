@@ -1745,3 +1745,298 @@ npm install
 - [ ] Implement health checks
 
 **Ready for Class 2!** 🎉
+
+---
+
+## 🚀 Bonus: Complete 3-Tier Deployment on Ubuntu (Raw Docker — No Scripts, No Compose)
+
+This section walks through deploying the full BMI Tracker stack on an **Ubuntu server** using only `docker` CLI commands. No Docker Compose, no automation scripts — every step is explicit and manual.
+
+### Architecture Overview
+
+```
+Browser → [Frontend: Nginx on :80]
+                   ↓ /api/*
+          [Backend: Node.js on :3000]  ← internal only, not exposed
+                   ↓
+          [Database: PostgreSQL :5432] ← internal only, not exposed
+
+All three containers share a single Docker bridge network: bmi-network
+Container-to-container communication uses container names as DNS hostnames.
+```
+
+---
+
+### Step 1: Install Docker on Ubuntu
+
+```bash
+# Update package index
+sudo apt update
+
+# Install Docker
+sudo apt install -y docker.io
+
+# Start and enable Docker service (survives reboots)
+sudo systemctl enable --now docker
+
+# Add your user to the docker group (avoids needing sudo for every command)
+sudo usermod -aG docker $USER
+
+# Apply the group change in the current session
+newgrp docker
+
+# Verify installation
+docker --version
+docker run hello-world
+```
+
+---
+
+### Step 2: Get the Application Code
+
+```bash
+# Clone the repository onto the server
+git clone <your-repo-url>
+
+# Move into the project root
+cd 3-tier-with-docker
+```
+
+---
+
+### Step 3: Create a Shared Docker Network
+
+All three containers must be on the same network so they can reach each other by container name.
+
+```bash
+docker network create bmi-network
+
+# Verify it was created
+docker network ls
+```
+
+> **Why this matters:** Docker's internal DNS resolves container names to their IPs automatically within a bridge network. The backend will reach PostgreSQL at the hostname `postgres`, and Nginx will proxy API calls to the backend at `backend:3000` — no IP addresses needed.
+
+---
+
+### Step 4: Run the Database Container
+
+```bash
+docker run -d \
+  --name postgres \
+  --network bmi-network \
+  -e POSTGRES_USER=bmi_user \
+  -e POSTGRES_PASSWORD=YourSecurePass123 \
+  -e POSTGRES_DB=bmidb \
+  -v postgres-data:/var/lib/postgresql/data \
+  --restart unless-stopped \
+  postgres:14-alpine
+```
+
+**What each flag does:**
+
+| Flag | Purpose |
+|------|---------|
+| `--name postgres` | Container name — also its DNS hostname on `bmi-network` |
+| `--network bmi-network` | Joins the shared network |
+| `-e POSTGRES_USER/PASSWORD/DB` | Creates the database, user, and password on first start |
+| `-v postgres-data:/var/lib/postgresql/data` | Persists data in a named volume (survives container restarts) |
+| `--restart unless-stopped` | Auto-restarts the container on server reboot |
+
+#### Wait for PostgreSQL to be ready
+
+```bash
+# Poll until postgres accepts connections (usually takes 5-10 seconds)
+until docker exec postgres pg_isready -U bmi_user -d bmidb; do
+  echo "Waiting for postgres..."
+  sleep 2
+done
+echo "PostgreSQL is ready"
+```
+
+#### Run the database migrations
+
+```bash
+# Migration 001: create the measurements table
+docker exec -i postgres psql -U bmi_user -d bmidb \
+  < backend/migrations/001_create_measurements.sql
+
+# Migration 002: add measurement_date column
+docker exec -i postgres psql -U bmi_user -d bmidb \
+  < backend/migrations/002_add_measurement_date.sql
+
+# Verify the table was created
+docker exec postgres psql -U bmi_user -d bmidb -c "\d measurements"
+```
+
+---
+
+### Step 5: Fix nginx.conf for Linux ⚠️
+
+> **This step is required on Linux.** The default `nginx.conf` uses `host.docker.internal` which only resolves on Docker Desktop (Mac/Windows). On a Linux server, you must use the backend container name instead.
+
+```bash
+# Replace host.docker.internal with the backend container name
+sed -i 's|http://host.docker.internal:3000|http://backend:3000|g' \
+  01-fundamentals-containerizing/frontend/nginx.conf
+
+# Copy the fixed nginx.conf into the frontend build context
+# (The frontend Dockerfile expects nginx.conf to be inside the frontend/ folder)
+cp 01-fundamentals-containerizing/frontend/nginx.conf frontend/nginx.conf
+
+# Confirm the change looks correct
+grep "proxy_pass" frontend/nginx.conf
+# Expected output:  proxy_pass http://backend:3000;
+```
+
+---
+
+### Step 6: Build and Run the Backend
+
+```bash
+# Build the backend image
+# -f points to the Dockerfile location
+# The last argument (backend/) is the build context (where the source code is)
+docker build \
+  -t bmi-backend:latest \
+  -f 01-fundamentals-containerizing/backend/Dockerfile \
+  backend/
+```
+
+```bash
+# Run the backend container
+docker run -d \
+  --name backend \
+  --network bmi-network \
+  -e NODE_ENV=production \
+  -e PORT=3000 \
+  -e DATABASE_URL=postgresql://bmi_user:YourSecurePass123@postgres:5432/bmidb \
+  -e FRONTEND_URL=http://<your-server-ip> \
+  --restart unless-stopped \
+  bmi-backend:latest
+```
+
+> Replace `<your-server-ip>` with the actual public IP or domain name of your server. This sets the CORS `origin` policy on the backend.
+
+> **Note:** No `-p` flag here — the backend is intentionally not exposed to the host. Only Nginx (frontend) is public-facing. The backend is reachable only from within `bmi-network`.
+
+#### Verify the backend started
+
+```bash
+# Check logs — should show "Server running on port 3000" and "Database connected"
+docker logs backend
+
+# Health check from inside the container
+docker exec backend wget -qO- http://localhost:3000/health
+# Expected: {"status":"ok","environment":"production"}
+```
+
+---
+
+### Step 7: Build and Run the Frontend
+
+```bash
+# Build the frontend image
+# Vite compiles React into static files; Nginx then serves them
+docker build \
+  -t bmi-frontend:latest \
+  -f 01-fundamentals-containerizing/frontend/Dockerfile \
+  frontend/
+```
+
+```bash
+# Run the frontend container — the only container exposed to the internet
+docker run -d \
+  --name frontend \
+  --network bmi-network \
+  -p 80:80 \
+  --restart unless-stopped \
+  bmi-frontend:latest
+```
+
+> If port 80 is already in use on the server, change `-p 80:80` to `-p 8080:80` and access the app at `http://<your-server-ip>:8080`.
+
+---
+
+### Step 8: Verify Everything Is Running
+
+```bash
+# All three containers should show status "Up"
+docker ps
+
+# Check health status of each container
+docker inspect --format='{{.Name}} → {{.State.Health.Status}}' postgres backend frontend
+
+# Test the Nginx health endpoint
+curl http://localhost/health
+# Expected: healthy
+
+# Test the full request path: browser → nginx → backend → database
+curl http://localhost/api/measurements
+# Expected: {"rows":[]}
+```
+
+Open `http://<your-server-ip>` in a browser — the BMI Tracker UI should load and be fully functional.
+
+---
+
+### Step 9: Open the Firewall (if ufw is active)
+
+```bash
+# Allow incoming HTTP traffic on port 80
+sudo ufw allow 80/tcp
+
+# Verify the rule was added
+sudo ufw status
+```
+
+---
+
+### Managing the Stack
+
+```bash
+# View logs for any container
+docker logs postgres
+docker logs backend
+docker logs frontend
+
+# Follow live logs (Ctrl+C to stop)
+docker logs -f backend
+
+# Restart a single container
+docker restart backend
+
+# Stop all three (order matters: stop front-to-back)
+docker stop frontend backend postgres
+
+# Start them again (order matters: start back-to-front)
+docker start postgres
+sleep 5
+docker start backend
+docker start frontend
+
+# Remove containers entirely (the postgres-data volume is preserved)
+docker rm -f frontend backend postgres
+
+# Remove the data volume too — WARNING: this deletes all database records
+docker volume rm postgres-data
+
+# Remove the shared network (only after containers are removed)
+docker network rm bmi-network
+```
+
+---
+
+### Quick Reference Summary
+
+| Step | Command |
+|------|---------|
+| Network | `docker network create bmi-network` |
+| Database | `docker run -d --name postgres --network bmi-network -e POSTGRES_USER=bmi_user -e POSTGRES_PASSWORD=... -e POSTGRES_DB=bmidb -v postgres-data:/var/lib/postgresql/data postgres:14-alpine` |
+| Migrations | `docker exec -i postgres psql -U bmi_user -d bmidb < backend/migrations/001_create_measurements.sql` |
+| Fix nginx | `sed -i 's\|host.docker.internal:3000\|backend:3000\|g' 01-fundamentals-containerizing/frontend/nginx.conf && cp 01-fundamentals-containerizing/frontend/nginx.conf frontend/nginx.conf` |
+| Build backend | `docker build -t bmi-backend:latest -f 01-fundamentals-containerizing/backend/Dockerfile backend/` |
+| Run backend | `docker run -d --name backend --network bmi-network -e NODE_ENV=production -e DATABASE_URL=postgresql://bmi_user:...@postgres:5432/bmidb bmi-backend:latest` |
+| Build frontend | `docker build -t bmi-frontend:latest -f 01-fundamentals-containerizing/frontend/Dockerfile frontend/` |
+| Run frontend | `docker run -d --name frontend --network bmi-network -p 80:80 bmi-frontend:latest` |
+| Verify | `docker ps` then `curl http://localhost/api/measurements` |
