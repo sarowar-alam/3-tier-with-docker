@@ -1,0 +1,2 @@
+# Normalize line endings to LF for all text files to avoid cross-platform diff noise
+* text=auto eol=lf
